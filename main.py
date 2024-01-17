@@ -2,6 +2,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from mrr import calculate_simple_mrr
+from churn import calculate_churn_rate
 import pandas as pd
 import io
 import csv
@@ -40,7 +41,10 @@ async def upload_file(file: UploadFile = File(...)):
     data = await file.read();
   
     if extension == 'csv':
-      result = calculate_simple_mrr(io.StringIO(data.decode('utf-8')))
+      mrr_result = calculate_simple_mrr(io.StringIO(data.decode('utf-8')))
+      churn_rate_result = calculate_churn_rate(io.StringIO(data.decode('utf-8')))
+
+      result = {"mrr": mrr_result, "churn_rate": churn_rate_result}
       return JSONResponse(content=result)
     
     elif extension == 'xlsx':
@@ -52,7 +56,9 @@ async def upload_file(file: UploadFile = File(...)):
       for row in sheet.iter_rows(min_row=1, values_only=True):
         csv_writer.writerow(row)
 
-      result = calculate_simple_mrr(io.StringIO(csv_data.getvalue()))
+      mrr_result = calculate_simple_mrr(io.StringIO(csv_data.getvalue()))
+      churn_rate_result = calculate_churn_rate(io.StringIO(csv_data.getvalue()))
+      result = {"mrr": mrr_result, "churn_rate": churn_rate_result}
       return JSONResponse(content=result)
 
 

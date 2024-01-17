@@ -39,11 +39,14 @@ def calculate_simple_mrr(data):
       if row['periodicidade'] == 'Mensal':
         monthly_billing += value
         monthly_subscriptions += 1
+
+  total_mrr = annual_billing + monthly_billing
   
   return {
     "active_subscribers": active_subscribers,
     "annual_subcriptions": annual_subscriptions,
     "monthly_subscriptions": monthly_subscriptions,
     "monthly_billing": round(monthly_billing, 2),
-    "annual_billing": round(annual_billing, 2)
+    "annual_billing": round(annual_billing, 2),
+    "total_mrr": round(total_mrr, 2),
   };
